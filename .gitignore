@@ -3,3 +3,4 @@
 /resources/log/*
 /vendor/
 /web/assets/*
+.idea/
