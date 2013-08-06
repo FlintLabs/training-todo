@@ -21,7 +21,7 @@ $app->get('/task', function() use ($app) {
 })->bind('task');
 
 $app->get('/task/{id}', function($id) use ($app) {
-    $task = $app['db']->fetchAll('SELECT * FROM task WHERE id = :id')->setParameter('id', $id);
+    $task = $app['db']->fetchAll('SELECT * FROM task WHERE id = :id', array('id' => $id));
     return new Response(json_encode($task), 200, array('Content-Type' => 'application/json'));
 })->bind('login');
 
@@ -47,16 +47,20 @@ $app->put('/task/{id}', function(Request $request, $id) use ($app) {
         return new Response ('Missing Parameters.', 400);
     }
 
+    $updateData = array(
+        'title' => $data['title'],
+        'due_at' => $data['dueAt']
+    );
+
     // Persist to the database
-    $app['db']->update('task', $data, $id);
+    $app['db']->update('task', $updateData, array('id' => $id));
 
     return new Response ('Task updated.', 200);
 })->bind('form');
 
 $app->delete('/task/{id}', function($id) use ($app) {
-    $app['db']->delete('task', $id);
-
+    $app['db']->delete('task', array('id' => $id));
     return new Response('Task Deleted.', 200);
-})->bind('logout');
+})->bind('delete');
 
 return $app;
